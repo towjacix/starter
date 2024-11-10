@@ -1,13 +1,4 @@
 require("codecompanion").setup({
-  strategies = {
-    chat = {
-      adapter = "gemini",
-    },
-    inline = {
-      adapter = "gemini",
-    },
-  },
-
   adapters = {
     anthropic = function()
       return require("codecompanion.adapters").extend("anthropic", {
@@ -16,26 +7,31 @@ require("codecompanion").setup({
         },
       })
     end,
+
     gemini = function ()
       return require("codecompanion.adapters").extend("gemini", {
         url = "https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${api_key}",
         env = {
-          api_key = os.getenv("API_KEY"),
+          api_key =os.getenv("GEMINI_API_KEY"),
           model = "gemini-1.5-flash"
         }
       })
     end
   },
 
-  opts = {
-    ---@param adapter CodeCompanion.Adapter
-    ---@return string
-    system_prompt = function(opts)
-      if opts.adapter.schema.model.default == "gemini-1.5-flash" then
-        return "My custom system prompt"
-      end
-      return "My default system prompt"
-    end
+  strategies = {
+
+    chat = {
+      adapter = "gemini",
+      roles = {
+        llm = "CodeCompanion",
+        user = "towjacix",
+      }, 
+    },
+
+    inline = {
+      adapter = "gemini",
+    },
   },
 
   temperature = {
@@ -50,9 +46,39 @@ require("codecompanion").setup({
     end,
   },
 
-    display = {
+  display = {
     chat = {
-      render_headers = false,
-    }
-  }
+      window = {
+        layout = "float", -- float|vertical|horizontal|buffer
+        border = "single",
+        height = 0.8,
+        width = 0.9,
+        relative = "editor",
+        opts = {
+          breakindent = true,
+          cursorcolumn = false,
+          cursorline = false,
+          foldcolumn = "0",
+          linebreak = true,
+          list = false,
+          signcolumn = "no",
+          spell = false,
+          wrap = true,
+        },
+      },
+     },
+
+      intro_message = "Welcome to CodeCompanion ✨! Press ? for options",
+      render_headers = false, -- Render headers in the chat buffer? Set this to false if you're using an exteral markdown formatting plugin
+      separator = "─", -- The separator between the different messages in the chat buffer
+      show_token_count = true, -- Show the token count for each response?
+      start_in_insert_mode = false, -- Open the chat buffer in insert mode?
+    
+
+      ---@param tokens number
+      ---@param adapter CodeCompanion.Adapter
+      token_count = function(tokens, adapter) -- The function to display the token count
+        return " (" .. tokens .. " tokens)"
+      end,
+    },
 })

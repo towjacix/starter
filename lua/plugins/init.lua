@@ -15,7 +15,9 @@ return {
     { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } }, -- Optional: For prettier markdown rendering
     { "stevearc/dressing.nvim", opts = {} }, -- Optional: Improves `vim.ui.select`
   },
-  config = true
+    config = function()
+      require "configs.code_companion"
+    end,
   },
   -- These are some examples, uncomment them if you want to see them work!
   {
