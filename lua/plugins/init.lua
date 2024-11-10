@@ -5,6 +5,13 @@ return {
     opts = require "configs.conform",
   },
 
+  {
+    'kiddos/gemini.nvim',
+    build = { 'pip install -r requirements.txt', ':UpdateRemotePlugins' },
+    config = function()
+      require('gemini').setup()
+    end
+  },
   -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",

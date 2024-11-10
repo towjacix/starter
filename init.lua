@@ -37,3 +37,4 @@ vim.schedule(function()
 end)
 
 require("myinit")
+require("luasnip.loaders.from_vscode").lazy_load()
