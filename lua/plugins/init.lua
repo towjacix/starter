@@ -1,4 +1,36 @@
 return {
+
+  {
+    "potamides/pantran.nvim",
+    config = function ()
+      require("pantran").setup{
+        default_engine = "google",
+
+        command = {
+          default_moode = "interactive",
+        },
+
+        engines = {
+          yandex = {
+            default_target = "vi",
+            -- api_key = vim.env.YANDEX_API_KEY,
+            iam_key = os.getenv("YANDEX_IAM_KEY"),
+          },
+        },
+      }
+    end
+  },
+
+  {
+    "ahmedkhalf/project.nvim",
+    config = function ()
+      require("project_nvim").setup{
+        patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", ".env", ".venv" },
+        silent_chdir = false,
+      }
+    end
+  },
+
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save
