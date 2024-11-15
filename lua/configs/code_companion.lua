@@ -20,7 +20,6 @@ require("codecompanion").setup({
       return require("codecompanion.adapters").extend("gemini", {
         url = "https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${api_key}",
         env = {
-          -- api_key = "AIzaSyDiIr9l_6C22HK7LPgFvvoruF-MR4YCtWw",
           api_key = os.getenv("API_KEY"),
           model = "gemini-1.5-flash"
         }
