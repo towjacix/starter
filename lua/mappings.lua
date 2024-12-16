@@ -153,3 +153,18 @@ end
 vim.api.nvim_set_keymap("v", "<F6>", [[
   "<Esc>:call GoogleSearch()<CR>
 ]], { noremap = true })-- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+
+-- Keyboard users
+vim.keymap.set("n", "<C-t>", function()
+  require("menu").open("default")
+end, {})
+
+-- mouse users + nvimtree users!
+vim.keymap.set("n", "<RightMouse>", function()
+  vim.cmd.exec '"normal! \\<RightMouse>"'
+
+  local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
+  require("menu").open(options, { mouse = true })
+end, {})
+
+vim.api.nvim_set_keymap('i', '<F2>', '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })

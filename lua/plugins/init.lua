@@ -1,6 +1,39 @@
 return {
 
   {
+    "https://github.com/folke/snacks.nvim",
+    lazy = false,
+    prority = 1000,
+    opts = {
+      bigfile = {
+        enabled = true
+      },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      statuscolumn = { enabled = true },
+      words = { enabled = true },
+    },
+  },
+
+  {
+    "filipdutescu/renamer.nvim",
+    opts = {}
+  }, 
+  
+  {"nvzone/typr"},
+  
+  { "nvzone/timerly", cmd = "TimerlyToggle" },
+
+  {
+    "nvzone/showkeys", 
+    cmd = "ShowkeysToggle",
+    opts = {
+      timeout = 2,
+      maxkeys = 6,
+    },
+  },
+
+  {
     "potamides/pantran.nvim",
     config = function ()
       require("pantran").setup{
