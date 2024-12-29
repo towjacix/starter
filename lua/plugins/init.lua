@@ -11,8 +11,29 @@ return {
       notifier = { enabled = true },
       quickfile = { enabled = true },
       statuscolumn = { enabled = true },
-      words = { enabled = true },
+      words = { enabled = true }
     },
+  },
+{
+  "azratul/live-share.nvim",
+  dependencies = {
+    "jbyuki/instant.nvim",
+  },
+    config = function()
+    vim.g.instant_username = "towjacix"
+    require("live-share").setup({
+      port_internal = 8765,
+      max_attempts = 40, -- 10 seconds
+      service = "serveo.net"
+    })
+  end
+},
+  
+{
+    'barrett-ruth/live-server.nvim',
+    build = 'pnpm add -g live-server',
+    cmd = { 'LiveServerStart', 'LiveServerStop' },
+    config = true
   },
 
   {
