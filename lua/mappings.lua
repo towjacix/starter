@@ -27,11 +27,12 @@ map("n", "<C-k>", "<C-w>k", { desc = "Switch Window up" })
 map("n", "<leader>fb", require("browser_bookmarks").select, { desc = "Fuzzy search browser bookmarks" })
 map("n", "<C-s>", "<cmd>w<CR>", { desc = "File Save" })
 map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "File Copy whole" })
-
+map("n", "<leader>j", "<cmd>FzfLua zoxide<CR>", { desc = "Zoxide"})
 map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "Toggle Line number" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "Toggle Relative number" })
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle NvCheatsheet" })
 map("n", "<leader>ai", "<cmd>CodeCompanionChat gemini<CR>", { desc = "Toggle Google Gemini"})
+map("n", "<leader>aic", "<cmd>CodeCompanionActions<CR>",  { desc = "Open previous chat"})
 map("n", "<leader>fm", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "Format Files" })

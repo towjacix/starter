@@ -28,6 +28,9 @@ require("lazy").setup({
 -- load theme
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
+-- require("base46").toggle_transparency()
+require("base46").load_all_highlights()
+require("nvconfig").base46.theme = 'chocolate'
 
 require "options"
 require "nvchad.autocmds"

@@ -21,15 +21,23 @@ require("codecompanion").setup({
         url = "https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${api_key}",
         env = {
           api_key = os.getenv("API_KEY"),
-          model = "gemini-1.5-flash"
+          model = "gemini-2.0-flash"
         }
       })
     end
   },
 
   strategies = {
-
-    chat = {
+  chat = {
+      tools = {
+        ["mcp"] = {
+          callback = function() return require("mcphub.extensions.codecompanions") end,
+          description = "Calls tools and resources from the MCP Servers",
+          opts = {
+            requires_approval = true,
+         }
+        }
+      },
       adapter = "gemini",
       roles = {
         llm = "CodeCompanion",
