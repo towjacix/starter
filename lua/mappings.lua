@@ -27,12 +27,12 @@ map("n", "<C-k>", "<C-w>k", { desc = "Switch Window up" })
 map("n", "<leader>fb", require("browser_bookmarks").select, { desc = "Fuzzy search browser bookmarks" })
 map("n", "<C-s>", "<cmd>w<CR>", { desc = "File Save" })
 map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "File Copy whole" })
-map("n", "<leader>j", "<cmd>FzfLua zoxide<CR>", { desc = "Zoxide"})
+map("n", "<leader>j", "<cmd>FzfLua zoxide<CR>", { desc = "Zoxide" })
 map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "Toggle Line number" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "Toggle Relative number" })
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle NvCheatsheet" })
-map("n", "<leader>ai", "<cmd>CodeCompanionChat gemini<CR>", { desc = "Toggle Google Gemini"})
-map("n", "<leader>aic", "<cmd>CodeCompanionActions<CR>",  { desc = "Open previous chat"})
+map("n", "<leader>ai", "<cmd>CodeCompanionChat gemini<CR>", { desc = "Toggle Google Gemini" })
+map("n", "<leader>aic", "<cmd>CodeCompanionActions<CR>", { desc = "Open previous chat" })
 map("n", "<leader>fm", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "Format Files" })
@@ -83,7 +83,9 @@ map("n", "<leader>fo", "<cmd>Telescope oldfiles<CR>", { desc = "Telescope Find o
 map("n", "<leader>fz", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Telescope Find in current buffer" })
 map("n", "<leader>cm", "<cmd>Telescope git_commits<CR>", { desc = "Telescope Git commits" })
 map("n", "<leader>gt", "<cmd>Telescope git_status<CR>", { desc = "Telescope Git status" })
-map("n", "<leader>th", "<cmd>Telescope themes<CR>", { desc = "Telescope Nvchad themes" })
+map("n", "<leader>th", function()
+  require("nvchad.themes").open { style = "bordered" }
+end, { desc = "Telescope Nvchad themes" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Telescope Find files" })
 map(
   "n",
@@ -146,18 +148,23 @@ map("n", "<leader>cc", function()
 end, { desc = "Blankline Jump to current context" })
 
 function GoogleSearch()
-  local searchterm = vim.fn.getreg("g")
-  vim.fn.system("google-chrome-stable \"http://google.com/search?q=" .. searchterm .. "\" &")
+  local searchterm = vim.fn.getreg "g"
+  vim.fn.system('google-chrome-stable "http://google.com/search?q=' .. searchterm .. '" &')
 end
 
 -- Visual mode mapping for F6
-vim.api.nvim_set_keymap("v", "<F6>", [[
+vim.api.nvim_set_keymap(
+  "v",
+  "<F6>",
+  [[
   "<Esc>:call GoogleSearch()<CR>
-]], { noremap = true })-- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+]],
+  { noremap = true }
+) -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 
 -- Keyboard users
 vim.keymap.set("n", "<C-t>", function()
-  require("menu").open("default")
+  require("menu").open "default"
 end, {})
 
 -- mouse users + nvimtree users!
@@ -168,4 +175,4 @@ vim.keymap.set("n", "<RightMouse>", function()
   require("menu").open(options, { mouse = true })
 end, {})
 
-vim.api.nvim_set_keymap('i', '<F2>', '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<F2>", '<cmd>lua require("renamer").rename()<cr>', { noremap = true, silent = true })
