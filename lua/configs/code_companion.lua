@@ -31,7 +31,9 @@ require("codecompanion").setup({
   chat = {
       tools = {
         ["mcp"] = {
-          callback = function() return require("mcphub.extensions.codecompanions") end,
+          callback = function ()
+            return require("mcphub.extensions.codecompanion")
+          end,
           description = "Calls tools and resources from the MCP Servers",
           opts = {
             requires_approval = true,

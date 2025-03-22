@@ -10,7 +10,7 @@ if not vim.uv.fs_stat(lazypath) then
 end
 
 vim.opt.rtp:prepend(lazypath)
-
+vim.opt.runtimepath:prepend(lazypath .. "/mcphub.nvim")
 local lazy_config = require "configs.lazy"
 
 -- load plugins
@@ -39,10 +39,10 @@ vim.schedule(function()
   require "mappings"
 end)
 
-require("myinit")
+require "myinit"
 require("luasnip.loaders.from_vscode").lazy_load()
-require("lazy").setup({
+require("lazy").setup {
   defaults = {
-    lazy = false
-  }
-})
+    lazy = false,
+  },
+}

@@ -1,33 +1,5 @@
 return {
-  {
-    "ravitemer/mcphub.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim", -- Required for Job and HTTP requests
-    },
-    -- cmd = "MCPHub", -- lazily start the hub when `MCPHub` is called
-    build = "npm install -g mcp-hub@latest", -- Installs required mcp-hub npm module
-    config = function()
-      require("mcphub").setup {
-        -- Required options
-        port = 3000, -- Port for MCP Hub server
-        config = vim.fn.expand "~/mcpservers.json", -- Absolute path to config file
 
-        -- Optional options
-        on_ready = function(hub)
-          -- Called when hub is ready
-        end,
-        on_error = function(err)
-          -- Called on errors
-        end,
-        log = {
-          level = vim.log.levels.WARN,
-          to_file = false,
-          file_path = nil,
-          prefix = "MCPHub",
-        },
-      }
-    end,
-  },
   {
     "https://github.com/folke/snacks.nvim",
     lazy = false,
@@ -120,7 +92,35 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "ravitemer/mcphub.nvim",
+      {
+        "ravitemer/mcphub.nvim",
+        dependencies = {
+          "nvim-lua/plenary.nvim", -- Required for Job and HTTP requests
+        },
+        -- cmd = "MCPHub", -- lazily start the hub when `MCPHub` is called
+        build = "npm install -g mcp-hub@latest", -- Installs required mcp-hub npm module
+        config = function()
+          require("mcphub").setup {
+            -- Required options
+            port = 3000, -- Port for MCP Hub server
+            config = vim.fn.expand "~/mcpservers.json", -- Absolute path to config file
+
+            -- Optional options
+            on_ready = function(hub)
+              -- Called when hub is ready
+            end,
+            on_error = function(err)
+              -- Called on errors
+            end,
+            log = {
+              level = vim.log.levels.WARN,
+              to_file = false,
+              file_path = nil,
+              prefix = "MCPHub",
+            },
+          }
+        end,
+      },
       "hrsh7th/nvim-cmp", -- Optional: For using slash commands and variables in the chat buffer
       "nvim-telescope/telescope.nvim", -- Optional: For using slash commands
       { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } }, -- Optional: For prettier markdown rendering
@@ -284,6 +284,9 @@ return {
     {
       "lervag/vimtex",
       lazy = false,
+      init = function()
+        vim.g.vimtex_view_method = "zathura"
+      end,
     },
 
     {
@@ -597,109 +600,109 @@ return {
       {
         "gelguy/wilder.nvim",
         lazy = false,
-        config = function ()
-          require('wilder').setup({
-            modes = {':', '/', '?'}
-          })
-        end
+        config = function()
+          require("wilder").setup {
+            modes = { ":", "/", "?" },
+          }
+        end,
       },
 
-{
-    "kawre/leetcode.nvim",
-    build = ":TSUpdate html", -- if you have `nvim-treesitter` installed
-    dependencies = {
-        "nvim-telescope/telescope.nvim",
-        -- "ibhagwan/fzf-lua",
-        "nvim-lua/plenary.nvim",
-        "MunifTanjim/nui.nvim",
-    },
-    opts = {
-        -- configuration goes here
-        lang = python,
-    },
-},
       {
-      "roobert/surround-ui.nvim",
-      lazy = false,
-      dependencies = {
-        "kylechui/nvim-surround",
-        "folke/which-key.nvim",
-      },
-      config = function()
-        require("surround-ui").setup {
-          root_key = "S",
-        }
-      end,
-    },
-
-    {
-      "piersolenski/wtf.nvim",
-      lazy = false,
-      dependencies = {
-        "MunifTanjim/nui.nvim",
-      },
-      opts = {},
-      keys = {
-        {
-          "gw",
-          mode = { "n", "x" },
-          function()
-            require("wtf").ai()
-          end,
-          desc = "Debug diagnostic with AI",
+        "kawre/leetcode.nvim",
+        build = ":TSUpdate html", -- if you have `nvim-treesitter` installed
+        dependencies = {
+          "nvim-telescope/telescope.nvim",
+          -- "ibhagwan/fzf-lua",
+          "nvim-lua/plenary.nvim",
+          "MunifTanjim/nui.nvim",
         },
-        {
-          mode = { "n" },
-          "gW",
-          function()
-            require("wtf").search()
-          end,
-          desc = "Search diagnostic with Google",
+        opts = {
+          -- configuration goes here
+          lang = python,
         },
       },
-    },
+      {
+        "roobert/surround-ui.nvim",
+        lazy = false,
+        dependencies = {
+          "kylechui/nvim-surround",
+          "folke/which-key.nvim",
+        },
+        config = function()
+          require("surround-ui").setup {
+            root_key = "S",
+          }
+        end,
+      },
 
-    {
-      "neovim/nvim-lspconfig",
-      dependencies = {
-        -- format & linting
-        {
-          "jose-elias-alvarez/null-ls.nvim",
-          config = function()
-            require "configs.null-ls"
-          end,
+      {
+        "piersolenski/wtf.nvim",
+        lazy = false,
+        dependencies = {
+          "MunifTanjim/nui.nvim",
+        },
+        opts = {},
+        keys = {
+          {
+            "gw",
+            mode = { "n", "x" },
+            function()
+              require("wtf").ai()
+            end,
+            desc = "Debug diagnostic with AI",
+          },
+          {
+            mode = { "n" },
+            "gW",
+            function()
+              require("wtf").search()
+            end,
+            desc = "Search diagnostic with Google",
+          },
         },
       },
-      config = function()
-        require "nvchad.configs.lspconfig"
-        require "configs.lspconfig"
-      end, -- Override to setup mason-lspconfig
-    },
 
-    -- override plugin configs
-    {
-      "williamboman/mason.nvim",
-      -- opts = overrides.mason
-    },
+      {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+          -- format & linting
+          {
+            "jose-elias-alvarez/null-ls.nvim",
+            config = function()
+              require "configs.null-ls"
+            end,
+          },
+        },
+        config = function()
+          require "nvchad.configs.lspconfig"
+          require "configs.lspconfig"
+        end, -- Override to setup mason-lspconfig
+      },
 
-    {
-      "nvim-treesitter/nvim-treesitter",
-      -- opts = overrides.treesitter,
-    },
+      -- override plugin configs
+      {
+        "williamboman/mason.nvim",
+        -- opts = overrides.mason
+      },
 
-    {
-      "nvim-tree/nvim-tree.lua",
-      -- opts = overrides.nvimtree,
-    },
+      {
+        "nvim-treesitter/nvim-treesitter",
+        -- opts = overrides.treesitter,
+      },
 
-    -- Install a plugin
-    {
-      "max397574/better-escape.nvim",
-      event = "InsertEnter",
-      config = function()
-        require("better_escape").setup()
-      end,
+      {
+        "nvim-tree/nvim-tree.lua",
+        -- opts = overrides.nvimtree,
+      },
+
+      -- Install a plugin
+      {
+        "max397574/better-escape.nvim",
+        event = "InsertEnter",
+        config = function()
+          require("better_escape").setup()
+        end,
+      },
     },
   },
-},
 }
