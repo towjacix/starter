@@ -82,7 +82,19 @@ local options = {
     excluded_groups = { "terminal (t)", "autopairs", "Nvim", "Opens" }, -- can add group name or with mode
   },
 
-  mason = { cmd = true, pkgs = {} },
+  mason = { cmd = true, pkgs = {
+    "clangd",
+    "css-lsp",
+    "html-lsp",
+    "ruff",
+    "pyright",
+    "pylint",
+    "lua-language-server",
+    "luacheck",
+    "vale",
+    "write-good",
+    "stylua",
+  } },
 }
 
 local status, chadrc = pcall(require, "chadrc")

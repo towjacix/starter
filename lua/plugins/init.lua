@@ -1,6 +1,18 @@
 return {
 
   {
+    "mfussenegger/nvim-lint",
+    prority = 1000,
+    lazy = false,
+    event = {
+      "BufReadPre",
+      "BufNewFile"
+    },
+    config = function ()
+      require("configs.lint")
+    end
+  },
+  {
     "https://github.com/folke/snacks.nvim",
     lazy = false,
     prority = 1000,
