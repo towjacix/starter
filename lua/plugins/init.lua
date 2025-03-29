@@ -14,6 +14,14 @@ return {
       words = { enabled = true },
     },
   },
+  
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      require "configs.lspconfig"
+    end,
+  },
+  
   {
     "azratul/live-share.nvim",
     dependencies = {
@@ -82,12 +90,6 @@ return {
   },
 
   {
-    "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
-    opts = require "configs.conform",
-  },
-
-  {
     "olimorris/codecompanion.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -121,20 +123,11 @@ return {
           }
         end,
       },
-      "hrsh7th/nvim-cmp", -- Optional: For using slash commands and variables in the chat buffer
-      "nvim-telescope/telescope.nvim", -- Optional: For using slash commands
       { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } }, -- Optional: For prettier markdown rendering
       { "stevearc/dressing.nvim", opts = {} }, -- Optional: Improves `vim.ui.select`
     },
     config = function()
       require "configs.code_companion"
-    end,
-  },
-  -- These are some examples, uncomment them if you want to see them work!
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      require "configs.lspconfig"
     end,
   },
 
@@ -146,18 +139,6 @@ return {
         -- config in there
       }
     end,
-  },
-
-  {
-    "adelarsq/image_preview.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("image_preview").setup()
-    end,
-  },
-  {
-    "lalitmee/browse.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim" },
   },
 
   {
@@ -326,15 +307,6 @@ return {
     },
 
     {
-      "L3MON4D3/LuaSnip",
-      dependencies = { "rafamadriz/friendly-snippets" },
-      config = function()
-        require("luasnip.loaders.from_vscode").lazy_load()
-        require("luasnip.loaders.from_vscode").load_standalone { path = "~/AppData/Roaming/Code/User/snippets/" }
-      end,
-    },
-
-    {
       "TobinPalmer/rayso.nvim",
       lazy = false,
       cmd = { "Rayso" },
@@ -401,18 +373,6 @@ return {
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
       },
-    },
-
-    {
-      "mfussenegger/nvim-dap-python",
-      lazy = false,
-    },
-
-    {
-      "williamboman/mason.nvim",
-      "mfussenegger/nvim-dap",
-      "jay-babu/mason-nvim-dap.nvim",
-      lazy = false,
     },
 
     {
@@ -661,40 +621,6 @@ return {
           },
         },
       },
-
-      {
-        "neovim/nvim-lspconfig",
-        dependencies = {
-          -- format & linting
-          {
-            "jose-elias-alvarez/null-ls.nvim",
-            config = function()
-              require "configs.null-ls"
-            end,
-          },
-        },
-        config = function()
-          require "nvchad.configs.lspconfig"
-          require "configs.lspconfig"
-        end, -- Override to setup mason-lspconfig
-      },
-
-      -- override plugin configs
-      {
-        "williamboman/mason.nvim",
-        -- opts = overrides.mason
-      },
-
-      {
-        "nvim-treesitter/nvim-treesitter",
-        -- opts = overrides.treesitter,
-      },
-
-      {
-        "nvim-tree/nvim-tree.lua",
-        -- opts = overrides.nvimtree,
-      },
-
       -- Install a plugin
       {
         "max397574/better-escape.nvim",
