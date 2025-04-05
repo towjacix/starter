@@ -16,6 +16,7 @@ map("n", "<leader>tq", "<cmd>Trouble diagnostics focus=true<CR>", { desc = "Open
 map("n", "<C-t>", "<cmd>terminal<CR>")
 map("n", "<leader>cn", "<cmd>Rayso<CR>", { desc = "Create code snippets" })
 map("n", "<leader>ls", "<cmd>Lazy load all<CR>", { desc = "Load all plugins" })
+map("n", "<leader>k", require("telescope.builtin").keymaps, { desc = "Display all keymaps"})
 map("n", "<C-f>", "<cmd>FzfLua<CR>")
 map("n", "<Esc>", "<cmd>noh<CR>", { desc = "General Clear highlights" })
 map("n", "<leader>lu", "<cmd>Lazy sync<CR>", { desc = "Update plugins" })

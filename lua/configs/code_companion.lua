@@ -8,43 +8,31 @@ local constants = {
 
 require("codecompanion").setup({
   adapters = {
-    anthropic = function()
-      return require("codecompanion.adapters").extend("anthropic", {
+    gemini = function()
+      return require("codecompanion.adapters").extend("gemini", {
         env = {
-          api_key = os.getenv("ANTHROPIC_API_KEY")
+          api_key = "AIzaSyDiIr9l_6C22HK7LPgFvvoruF-MR4YCtWw",
+          model = "gemini-2.0-flash",
         },
       })
     end,
-
-    gemini = function ()
-      return require("codecompanion.adapters").extend("gemini", {
-        url = "https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${api_key}",
-        env = {
-          api_key = os.getenv("API_KEY"),
-          model = "gemini-2.0-flash"
-        }
-      })
-    end
   },
 
   strategies = {
-  chat = {
+    chat = {
       tools = {
         ["mcp"] = {
-          callback = function ()
+          callback = function()
             return require("mcphub.extensions.codecompanion")
           end,
           description = "Calls tools and resources from the MCP Servers",
-          opts = {
-            requires_approval = true,
-         }
-        }
+        },
       },
       adapter = "gemini",
       roles = {
         llm = "CodeCompanion",
         user = "towjacix",
-      }, 
+      },
     },
 
     inline = {
@@ -84,23 +72,22 @@ require("codecompanion").setup({
           wrap = true,
         },
       },
-     },
-
-      intro_message = "Welcome to CodeCompanion ✨! Press ? for options",
-      render_headers = false, -- Render headers in the chat buffer? Set this to false if you're using an exteral markdown formatting plugin
-      separator = "─", -- The separator between the different messages in the chat buffer
-      show_token_count = true, -- Show the token count for each response?
-      start_in_insert_mode = false, -- Open the chat buffer in insert mode?
-    
-
-      ---@param tokens number
-      ---@param adapter CodeCompanion.Adapter
-      token_count = function(tokens, adapter) -- The function to display the token count
-        return " (" .. tokens .. " tokens)"
-      end,
     },
 
- prompt_library = {
+    intro_message = "Welcome to CodeCompanion ✨! Press ? for options",
+    render_headers = false, -- Render headers in the chat buffer? Set this to false if you're using an exteral markdown formatting plugin
+    separator = "─", -- The separator between the different messages in the chat buffer
+    show_token_count = true, -- Show the token count for each response?
+    start_in_insert_mode = true, -- Open the chat buffer in insert mode?
+
+    ---@param tokens number
+    ---@param adapter CodeCompanion.Adapter
+    token_count = function(tokens, adapter) -- The function to display the token count
+      return " (" .. tokens .. " tokens)"
+    end,
+  },
+
+  prompt_library = {
     ["Custom Prompt"] = {
       strategy = "inline",
       description = "Prompt the LLM from Neovim",
@@ -290,7 +277,7 @@ require("codecompanion").setup({
       opts = {
         index = 7,
         is_default = true,
-        is_slash_cmd = false,
+        is_slash_cmd = true,
         modes = { "v" },
         short_name = "fix",
         auto_submit = true,
@@ -371,7 +358,7 @@ Use Markdown formatting and include the programming language name at the start o
         {
           role = constants.USER_ROLE,
           content = function(context)
-            local buf_utils = require("codecompanion.utils.buffers")
+            local buf_utils = require "codecompanion.utils.buffers"
 
             return "```" .. context.filetype .. "\n" .. buf_utils.get_content(context.bufnr) .. "\n```\n\n"
           end,
@@ -511,7 +498,7 @@ This is the code, for context:
 %s
 ```
 ]],
-              vim.fn.system("git diff --no-ext-diff --staged")
+              vim.fn.system "git diff --no-ext-diff --staged"
             )
           end,
           opts = {
@@ -521,5 +508,4 @@ This is the code, for context:
       },
     },
   },
-
 })

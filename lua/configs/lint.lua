@@ -6,10 +6,12 @@ lint.linters_by_ft = {
   python = { "ruff" },
   python = {"pylint"},
   lua = { "luacheck" },
+  json = { "jsonlint" },
+  typescript = { "eslint_d" }
 }
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave", "TextChanged"}, {
-  pattern = {"*.py", "*.md", "*.lua"},
+  pattern = {"*.py", "*.md", "*.lua", "*.js", "*.ts"},
   group = lint_augroup,
   callback = function()
     -- try_lint without arguments runs the linters defined in `linters_by_ft`

@@ -6,11 +6,11 @@ return {
     lazy = false,
     event = {
       "BufReadPre",
-      "BufNewFile"
+      "BufNewFile",
     },
-    config = function ()
-      require("configs.lint")
-    end
+    config = function()
+      require "configs.lint"
+    end,
   },
   {
     "https://github.com/folke/snacks.nvim",
@@ -26,14 +26,20 @@ return {
       words = { enabled = true },
     },
   },
-  
+
+  {
+    "williamboman/mason.nvim",
+    "mfussenegger/nvim-dap",
+    "jay-babu/mason-nvim-dap.nvim",
+  },
+
   {
     "neovim/nvim-lspconfig",
     config = function()
       require "configs.lspconfig"
     end,
   },
-  
+
   {
     "azratul/live-share.nvim",
     dependencies = {
@@ -114,10 +120,18 @@ return {
         -- cmd = "MCPHub", -- lazily start the hub when `MCPHub` is called
         build = "npm install -g mcp-hub@latest", -- Installs required mcp-hub npm module
         config = function()
-          require("mcphub").setup {
+          require("mcphub").setup({
             -- Required options
-            port = 3000, -- Port for MCP Hub server
+            port = 37373, -- Port for MCP Hub server
+            auto_approve = true,
             config = vim.fn.expand "~/mcpservers.json", -- Absolute path to config file
+
+            extensions = {
+              codecompanion = {
+                show_result_in_chat = true,
+                make_vars = true,
+              }
+            },
 
             -- Optional options
             on_ready = function(hub)
@@ -132,7 +146,7 @@ return {
               file_path = nil,
               prefix = "MCPHub",
             },
-          }
+          })
         end,
       },
       { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } }, -- Optional: For prettier markdown rendering
@@ -187,7 +201,7 @@ return {
   },
 
   { "nvim-telescope/telescope.nvim", dependencies = "tsakirist/telescope-lazy.nvim" },
-
+  { "rcarriga/nvim-dap-ui", dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} },
   {
     "linux-cultist/venv-selector.nvim",
     dependencies = {
