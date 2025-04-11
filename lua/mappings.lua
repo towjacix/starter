@@ -34,6 +34,7 @@ map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "Toggle Relative number" })
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle NvCheatsheet" })
 map("n", "<leader>ai", "<cmd>CodeCompanionChat gemini<CR>", { desc = "Toggle Google Gemini" })
 map("n", "<leader>aic", "<cmd>CodeCompanionActions<CR>", { desc = "Open previous chat" })
+map("n", "<A-r>", "<cmd>MurenToggle<CR>", { desc = "Toggle renamer"})
 map("n", "<leader>fm", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "Format Files" })
