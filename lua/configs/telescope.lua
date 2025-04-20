@@ -1,6 +1,13 @@
+local actions = require "telescope.actions"
+local open_with_trouble = require("trouble.sources.telescope").open
+local add_to_trouble = require("trouble.sources.telescope").add
+
 -- This is your opts table
 require("telescope").setup {
   defaults = {
+    mappings = {
+      i = { ["<leader>to"] = open_with_trouble },
+    },
     layout_config = {
       horizontal = {
         preview_cutoff = 0,
@@ -12,7 +19,7 @@ require("telescope").setup {
     ["ui-select"] = {
       require("telescope.themes").get_dropdown {
         -- even more opts
-        telescope = { style = "borderless" },
+        telescope = { style = "bordered" },
         require("telescope.themes").get_cursor {},
       },
     },

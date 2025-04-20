@@ -1,4 +1,29 @@
 return {
+
+  {
+    "stevearc/resession.nvim",
+    config = function()
+      require "configs.resession"
+    end,
+  },
+
+  {
+    "stevearc/aerial.nvim",
+    lazy = false,
+    opts = require "configs.aerial",
+    dependency = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
+  },
+
+  {
+    "stevearc/conform.nvim",
+    cmd = "ConformInfo",
+    event = "BufWritePre",
+    opts = require "configs.conform",
+  },
+
   {
     "chipsenkbeil/distant.nvim",
     branch = "v0.3",
@@ -226,7 +251,23 @@ return {
     end,
   },
 
-  { "nvim-telescope/telescope.nvim", dependencies = "tsakirist/telescope-lazy.nvim" },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "tsakirist/telescope-lazy.nvim",
+      "scottmckendry/pick-resession.nvim",
+    },
+    config = function()
+      require("telescope").setup {
+        extensions = {
+          resession = {
+            prompt_title = "Find Sessions",
+            dir = "session",
+          },
+        },
+      }
+    end,
+  },
   { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
   {
     "linux-cultist/venv-selector.nvim",
@@ -418,7 +459,7 @@ return {
     {
       "folke/trouble.nvim",
       dependencies = { "nvim-tree/nvim-web-devicons" },
-      enable = true,
+      cmd = "Trouble",
       lazy = false,
       opts = {
         -- your configuration comes here
@@ -678,11 +719,18 @@ return {
 
       {
         "gelguy/wilder.nvim",
+        dependencies = {
+          "romgrk/fzy-lua-native",
+          {
+            "nixprime/cpsm",
+            dependencies = { "ctrlpvim/ctrlp.vim", lazy = false },
+            lazy = false,
+            build = "bash ./install.sh",
+          },
+        },
         lazy = false,
         config = function()
-          require("wilder").setup {
-            modes = { ":", "/", "?" },
-          }
+          require "configs.wilder"
         end,
       },
 
@@ -697,7 +745,7 @@ return {
         },
         opts = {
           -- configuration goes here
-          lang = python,
+          lang = "python",
         },
       },
       {

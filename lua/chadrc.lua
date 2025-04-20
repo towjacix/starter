@@ -4,22 +4,25 @@ local options = {
     theme = "chocolate", -- default theme
     hl_add = {},
     hl_override = {},
-    integrations = {dap},
+    integrations = {},
     changed_themes = {},
     transparency = false,
-    theme_toggle = {},
+    theme_toggle = { "chocolate", "one_light" },
   },
 
   ui = {
     cmp = {
-      icons = true,
-      lspkind_text = true,
+      icons_left = false, -- only for non-atom styles!
       style = "default", -- default/flat_light/flat_dark/atom/atom_colored
+      abbr_maxwidth = 60,
+      -- for tailwind, css lsp etc
+      format_colors = { lsp = true, icon = "󱓻" },
     },
 
     telescope = { style = "bordered" }, -- borderless / bordered
 
     statusline = {
+      enabled = true,
       theme = "default", -- default/vscode/vscode_colored/minimal
       -- default/round/block/arrow separators work only for default statusline theme
       -- round and block will work for minimal theme only
@@ -34,35 +37,52 @@ local options = {
       lazyload = true,
       order = { "treeOffset", "buffers", "tabs", "btns" },
       modules = nil,
+      bufwidth = 21,
+    },
+  },
+
+  nvdash = {
+    load_on_startup = false,
+    header = {
+      "                            ",
+      "     ▄▄         ▄ ▄▄▄▄▄▄▄   ",
+      "   ▄▀███▄     ▄██ █████▀    ",
+      "   ██▄▀███▄   ███           ",
+      "   ███  ▀███▄ ███           ",
+      "   ███    ▀██ ███           ",
+      "   ███      ▀ ███           ",
+      "   ▀██ █████▄▀█▀▄██████▄    ",
+      "     ▀ ▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀   ",
+      "                            ",
+      "     Powered By  eovim    ",
+      "                            ",
     },
 
-    nvdash = {
-      load_on_startup = false,
+    buttons = {
+      { txt = "  Find File", keys = "ff", cmd = "Telescope find_files" },
+      { txt = "  Recent Files", keys = "fo", cmd = "Telescope oldfiles" },
+      { txt = "󰈭  Find Word", keys = "fw", cmd = "Telescope live_grep" },
+      { txt = "󱥚  Themes", keys = "th", cmd = ":lua require('nvchad.themes').open()" },
+      { txt = "  Mappings", keys = "ch", cmd = "NvCheatsheet" },
 
-      header = {
-        "           ▄ ▄                   ",
-        "       ▄   ▄▄▄     ▄ ▄▄▄ ▄ ▄     ",
-        "       █ ▄ █▄█ ▄▄▄ █ █▄█ █ █     ",
-        "    ▄▄ █▄█▄▄▄█ █▄█▄█▄▄█▄▄█ █     ",
-        "  ▄ █▄▄█ ▄ ▄▄ ▄█ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ",
-        "  █▄▄▄▄ ▄▄▄ █ ▄ ▄▄▄ ▄ ▄▄▄ ▄ ▄ █ ▄",
-        "▄ █ █▄█ █▄█ █ █ █▄█ █ █▄█ ▄▄▄ █ █",
-        "█▄█ ▄ █▄▄█▄▄█ █ ▄▄█ █ ▄ █ █▄█▄█ █",
-        "    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ █▄█▄▄▄█    ",
+      { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
+
+      {
+        txt = function()
+          local stats = require("lazy").stats()
+          local ms = math.floor(stats.startuptime) .. " ms"
+          return "  Loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms
+        end,
+        hl = "NvDashFooter",
+        no_gap = true,
       },
 
-      buttons = {
-        { "  Find File", "Spc f f", "Telescope find_files" },
-        { "󰈚  Recent Files", "Spc f o", "Telescope oldfiles" },
-        { "󰈭  Find Word", "Spc f w", "Telescope live_grep" },
-        { "  Bookmarks", "Spc m a", "Telescope marks" },
-        { "  Themes", "Spc t h", "Telescope themes" },
-        { "  Mappings", "Spc c h", "NvCheatsheet" },
-      },
+      { txt = "─", hl = "NvDashFooter", no_gap = true, rep = true },
     },
   },
 
   term = {
+    base46_colors = true,
     winopts = { number = false, relativenumber = false },
     sizes = { sp = 0.3, vsp = 0.2, ["bo sp"] = 0.3, ["bo vsp"] = 0.2 },
     float = {
@@ -82,19 +102,14 @@ local options = {
     excluded_groups = { "terminal (t)", "autopairs", "Nvim", "Opens" }, -- can add group name or with mode
   },
 
-  mason = { cmd = true, pkgs = {
-    "clangd",
-    "css-lsp",
-    "html-lsp",
-    "ruff",
-    "pyright",
-    "pylint",
-    "lua-language-server",
-    "luacheck",
-    "vale",
-    "write-good",
-    "stylua",
-  } },
+  mason = { pkgs = {}, skip = {} },
+
+  colorify = {
+    enabled = true,
+    mode = "virtual", -- fg, bg, virtual
+    virt_text = "󱓻 ",
+    highlight = { hex = true, lspvars = true },
+  },
 }
 
 local status, chadrc = pcall(require, "chadrc")
