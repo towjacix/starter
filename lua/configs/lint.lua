@@ -3,7 +3,7 @@ local lint_augroup = vim.api.nvim_create_augroup("lint", {clear = true})
 
 lint.linters_by_ft = {
     markdown = {"markdownlint", "textlint", "write-good"},
-    python = {"ruff", "pylint", "flake8", "vulture"},
+    python = {"ruff", "flake8", "vulture"},
     lua = {"luacheck"},
     json = {"jsonlint"},
     typescript = {"eslint_d"}
@@ -28,6 +28,7 @@ lint.linters.vulture.args = {
 }
 
 lint.linters.ruff.args = {
+    "--fix", "--show-fixes",
     "--config=" .. vim.fn.expand "~/.config/nvim/tools/python" .. "/ruff.toml"
 }
 

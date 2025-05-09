@@ -34,7 +34,8 @@ npairs.add_rules {
 local opts = {
     enabled = function(bufnr) return true end, -- control if auto-pairs should be enabled when attaching to a buffer
     disable_filetype = {
-        "TelescopePrompt", "spectre_panel", "snacks_picker_input"
+        "TelescopePrompt", "spectre_panel", "snacks_picker_input", "guihua",
+        "guihua-rust", "clap_input"
     },
     disable_in_macro = true, -- disable when recording or executing a macro
     disable_in_visualblock = false, -- disable when insert after visual block mode

@@ -102,7 +102,16 @@ local options = {
         excluded_groups = {"terminal (t)", "autopairs", "Nvim", "Opens"} -- can add group name or with mode
     },
 
-    mason = {pkgs = {}, skip = {}},
+    mason = {
+        pkgs = {
+            "html-lsp", "css-lsp", "clangd", "python-language-server",
+            "lua_language-server", "typescript-language-server", "taplo",
+            "marksman", "eslint", "stylua", "luaformatter", "mdformat", "mdsf",
+            "cbfmt", "pyproject-fmt", "prettier", "clang-format", "black",
+            "isort", "yapf", "ruff"
+        },
+        skip = {}
+    },
 
     colorify = {
         enabled = true,
