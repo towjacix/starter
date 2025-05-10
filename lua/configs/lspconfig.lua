@@ -8,23 +8,33 @@ vim.lsp.enable(servers)
 
 -- config table
 vim.lsp.config("pylsp", {
-    filetype = { ".py" },
-    root_markers = { "requirements.txt", "main.py", "pyproject.toml" },
+    filetype = {".py"},
+    root_markers = {"requirements.txt", "main.py", "pyproject.toml"},
     settings = {
         ["pylsp"] = {
             plugins = {
-                pylint = { enabled = true },
-                rope_completion = { enabled = true, eager = true },
-                rope_autoimport = { true },
-                pydocstyle = { enabled = true },
+                pylint = {enabled = true},
+                rope_completion = {enabled = true, eager = true},
+                rope_autoimport = {true},
+                pydocstyle = {enabled = true},
                 pycodestyle = {
                     enabled = true,
-                    ignore = { "W391", "E111", "W291", "E501" }, -- Added E111 and W291
+                    ignore = {"W391", "E111", "W291", "E501"}, -- Added E111 and W291
                     indentSize = 4
                 },
-                pylsp_rope = { rename = { enabled = true } },
-                jedi_rename = { enabled = false }
+                pylsp_rope = {rename = {enabled = true}},
+                jedi_rename = {enabled = false}
             }
         }
     }
+})
+
+vim.lsp.config("*", {
+    on_attach = function(client, bufnr)
+        require("illuminate").on_attach(client)
+        require("navigator.lspclient.mapping").setup {
+            bufnr = bufnr,
+            client = client
+        }
+    end
 })
