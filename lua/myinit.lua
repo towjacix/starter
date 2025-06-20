@@ -1,10 +1,11 @@
+-- Neovide
 if vim.g.neovide then
     vim.o.guifont = "Hack Nerd Font:h17"
     vim.g.neovide_fullscreen = false
     vim.g.neovide_profiler = false
     vim.g.neovide_cursor_animate_command_line = true
     vim.g.neovide_cursor_animate_in_insert_mode = true
-    vim.g.neovide_cursor_vfx_mode = "railgun"
+    vim.g.neovide_cursor_vfx_mode = ""
     vim.g.neovide_cursor_vfx_opacity = 200.0
     vim.g.neovide_cursor_vfx_particle_lifetime = 1.2
     vim.g.neovide_cursor_vfx_particle_density = 7.0
@@ -18,5 +19,12 @@ if vim.g.neovide then
     vim.g.neovide_cursor_animate_in_insert_mode = true
     vim.g.neovide_cursor_animate_command_line = true
 end
+
+-- autocmds
 vim.cmd "ShowkeysToggle"
 require "configs.dap"
+
+-- vimabbr
+vim.cmd [[
+    cnoreabbrev tbcls tabclose
+]]

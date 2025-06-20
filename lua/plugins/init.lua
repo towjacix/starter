@@ -1,11 +1,64 @@
 return {
 
-    { import = "nvchad.blink.lazyspec" }, {
+    { "junegunn/fzf" }, {
+    "m4xshen/hardtime.nvim",
+    lazy = false,
+    dependencies = { "MunifTanjim/nui.nvim" },
+    opts = {
+        restriction_mode = "hint",
+        disable_mouse = false,
+        disabled_keys = { ["<Right>"] = false, ["<Left>"] = false }
+    }
+}, {
+    "lewis6991/hover.nvim",
+    config = function()
+        require("hover").setup {
+            init = function() require "hover.providers.lsp" end,
+            preview_opts = { border = "single" },
+            mouse_providers = { "LSP" },
+            mouse_delay = 1000,
+            vim.keymap.set("n", "<MouseMove>", require("hover").hover_mouse,
+                { desc = "hover.nvim" })
+        }
+        vim.o.mousemoveevent = true
+    end
+}, { "hrsh7th/nvim-cmp", enabled = false }, {
+    "saghen/blink.cmp",
+    lazy = false,
+    prority = 1000,
+    version = "1.*",
+    event = { "InsertEnter", "CmdLineEnter" },
+
+    opts_extend = { "sources.default" },
+
+    opts = function() return require "nvchad.blink.config" end,
+    dependencies = {
+        "mikavilpas/blink-ripgrep.nvim", "rafamadriz/friendly-snippets", {
+        -- snippet plugin
+        "L3MON4D3/LuaSnip",
+        dependencies = "rafamadriz/friendly-snippets",
+        opts = {
+            history = true,
+            updateevents = "TextChanged,TextChangedI"
+        },
+        config = function(_, opts)
+            require("luasnip").config.set_config(opts)
+            require "nvchad.configs.luasnip"
+        end
+    }, {
+        "windwp/nvim-autopairs",
+        opts = {
+            fast_wrap = {},
+            disable_filetype = { "TelescopePrompt", "vim" }
+        }
+    }
+    }
+}, {
     "ray-x/navigator.lua",
     lazy = false,
     dependencies = {
         { "ray-x/guihua.lua",     run = "cd lua/fzy && make" },
-        { "neovim/nvim-lspconfig" }, { "ray-x/lsp_signature.nvim" }
+        { "neovim/nvim-lspconfig" }, { "nvim-tree/nvim-web-devicons" }
     },
     config = function() require "configs.navigator" end
 }, {
@@ -13,7 +66,7 @@ return {
     lazy = false,
     config = function() require "configs.diff" end
 }, {
-    "RRethy/vim-illuminate", -- default configuration
+    "RRethy/vim-illuminate",     -- default configuration
     config = function()
         require("illuminate").configure {
             -- providers: provider used to get references in the buffer, ordered by priority
@@ -65,46 +118,29 @@ return {
         }
     end
 }, {
-    "hat0uma/csvview.nvim",
-    ---@module "csvview"
-    ---@type CsvView.Options
-    opts = {
-        view = {
-            ---@type CsvView.Options.View.DisplayMode
-            display_mode = "border"
-        },
-        parser = { comments = { "#", "//" } },
-        keymaps = {
-            -- Text objects for selecting fields
-            textobject_field_inner = { "if", mode = { "o", "x" } },
-            textobject_field_outer = { "af", mode = { "o", "x" } },
-            -- Excel-like navigation:
-            -- Use <Tab> and <S-Tab> to move horizontally between fields.
-            -- Use <Enter> and <S-Enter> to move vertically between rows and place the cursor at the end of the field.
-            -- Note: In terminals, you may need to enable CSI-u mode to use <S-Tab> and <S-Enter>.
-            jump_next_field_end = { "<Tab>", mode = { "n", "v" } },
-            jump_prev_field_end = { "<S-Tab>", mode = { "n", "v" } },
-            jump_next_row = { "<Enter>", mode = { "n", "v" } },
-            jump_prev_row = { "<S-Enter>", mode = { "n", "v" } }
-        }
-    },
-    cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" }
-}, {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = require "configs.autopairs"
-    -- use opts = {} for passing setup options
-    -- this is equivalent to setup({}) function
-}, {
     "nvim-treesitter/nvim-treesitter",
+    dependencies = {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        lazy = true,
+        config = function()
+            require "configs.treesitter-textobjects"
+        end
+    },
     event = { "BufReadPre", "BufNewFile" },
     config = function() require "configs.treesitter" end
 }, {
     "stevearc/resession.nvim",
     lazy = false,
+    prority = 1000,
     config = function()
         local resession = require "resession"
-        resession.setup {}
+        resession.setup {
+            options = {
+                "binary", "bufhidden", "buflisted", "cmdheight", "diff",
+                "filetype", "modifiable", "previewwindow", "readonly",
+                "scrollbind", "winfixheight", "winfixwidth"
+            }
+        }
         vim.api.nvim_create_autocmd("VimEnter", {
             callback = function()
                 -- Only load the session if nvim was started with no args
@@ -126,21 +162,10 @@ return {
         })
     end
 }, {
-    "stevearc/aerial.nvim",
-    lazy = false,
-    opts = require "configs.aerial",
-    dependency = {
-        "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons"
-    }
-}, {
     "stevearc/conform.nvim",
     cmd = "ConformInfo",
     event = { "BufWritePre", "BufWritePost" },
     opts = require "configs.conform"
-}, {
-    "chipsenkbeil/distant.nvim",
-    branch = "v0.3",
-    config = function() require("distant"):setup() end
 }, {
     "folke/zen-mode.nvim",
     opts = {
@@ -148,11 +173,6 @@ return {
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
     }
-}, {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function() require("harpoon"):setup() end
 }, {
     "mfussenegger/nvim-lint",
     prority = 1000,
@@ -168,7 +188,124 @@ return {
         notifier = { enabled = true },
         quickfile = { enabled = true },
         statuscolumn = { enabled = true },
-        words = { enabled = true }
+        image = { enabled = true },
+        picker = {
+            projects = {
+                patterns = {
+                    ".git", ".ropeproject", "requirements.txt", ".env",
+                    ".venv", "Makefile", "package.json", ".gitignore"
+                }
+            },
+            undo = {
+                finder = "vim_undo",
+                format = "undo",
+                preview = "diff",
+                confirm = "item_action",
+                win = {
+                    preview = {
+                        wo = {
+                            number = true,
+                            relativenumber = false,
+                            signcolumn = "no"
+                        }
+                    },
+                    input = {
+                        keys = {
+                            ["<c-y>"] = { "yank_add", mode = { "n", "i" } },
+                            ["<c-s-y>"] = { "yank_del", mode = { "n", "i" } }
+                        }
+                    }
+                },
+                actions = {
+                    yank_add = { action = "yank", field = "added_lines" },
+                    yank_del = { action = "yank", field = "removed_lines" }
+                },
+                icons = { tree = { last = "┌╴" } }, -- the tree is upside down
+                diff = {
+                    ctxlen = 4,
+                    ignore_cr_at_eol = true,
+                    ignore_whitespace_change_at_eol = true,
+                    indent_heuristic = true
+                }
+            }
+        },
+        words = {
+            debounce = 200,              -- time in ms to wait before updating
+            notify_jump = false,         -- show a notification when jumping
+            notify_end = true,           -- show a notification when reaching the end
+            foldopen = true,             -- open folds after jumping
+            jumplist = true,             -- set jump point before jumping
+            modes = { "n", "i", "c" },   -- modes to show references
+            filter = function(buf)       -- what buffers to enable `snacks.words`
+                return vim.g.snacks_words ~= false and
+                    vim.b[buf].snacks_words ~= false
+            end
+        }
+    },
+    keys = {
+        {
+            "<leader><space>",
+            function() Snacks.picker.smart() end,
+            desc = "Smart Find Files"
+        },
+
+        {
+            "<leader>.",
+            function() Snacks.scratch() end,
+            desc = "Toggle Scratch Buffer"
+        }, {
+        "<leader>fn",
+        function() Snacks.picker.notifications() end,
+        desc = "Notification"
+    },
+
+        {
+            "<leader>fp",
+            function() Snacks.picker.projects() end,
+            desc = "Projects"
+        },
+
+        { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
+        { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
+        {
+            "<leader>sp",
+            function() Snacks.picker.lazy() end,
+            desc = "Search for Plugin Spec"
+        },
+        {
+            "<leader>sk",
+            function() Snacks.picker.keymaps() end,
+            desc = "Keymaps"
+        },
+        {
+            "<leader>sC",
+            function() Snacks.picker.commands() end,
+            desc = "Commands"
+        }, {
+        "<leader>sc",
+        function() Snacks.picker.command_history() end,
+        desc = "Command History"
+    },
+        {
+            "<leader>sH",
+            function() Snacks.picker.highlights() end,
+            desc = "Highlights"
+        },
+        {
+            "<leader>sM",
+            function() Snacks.picker.man() end,
+            desc = "Man Pages"
+        },
+        {
+            "<leader>sR",
+            function() Snacks.picker.resume() end,
+            desc = "Resume"
+        },
+        {
+            "<leader>su",
+            function() Snacks.picker.undo() end,
+            desc = "Undo History"
+        }, { "<leader>j", function() Snacks.picker.zoxide() end }
     }
 }, {
     "mason-org/mason.nvim",
@@ -190,7 +327,7 @@ return {
         vim.g.instant_username = "towjacix"
         require("live-share").setup {
             port_internal = 8765,
-            max_attempts = 40, -- 10 seconds
+            max_attempts = 40,     -- 10 seconds
             service = "serveo.net"
         }
     end
@@ -205,49 +342,22 @@ return {
     cmd = "ShowkeysToggle",
     opts = { timeout = 2, maxkeys = 6 }
 }, {
-    "potamides/pantran.nvim",
-    config = function()
-        require("pantran").setup {
-            default_engine = "google",
-
-            command = { default_moode = "interactive" },
-
-            engines = {
-                yandex = {
-                    default_target = "vi",
-                    -- api_key = vim.env.YANDEX_API_KEY,
-                    iam_key = os.getenv "YANDEX_IAM_KEY"
-                }
-            }
-        }
-    end
-}, {
-    "ahmedkhalf/project.nvim",
-    config = function()
-        require("project_nvim").setup {
-            patterns = {
-                ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile",
-                "package.json", ".env", ".venv"
-            },
-            silent_chdir = false
-        }
-    end
-}, {
     "olimorris/codecompanion.nvim",
     dependencies = {
-        "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", {
+        "nvim-lua/plenary.nvim", "ravitemer/codecompanion-history.nvim",
+        "nvim-treesitter/nvim-treesitter", {
         "ravitemer/mcphub.nvim",
         dependencies = {
-            "nvim-lua/plenary.nvim" -- Required for Job and HTTP requests
+            "nvim-lua/plenary.nvim"         -- Required for Job and HTTP requests
         },
         -- cmd = "MCPHub", -- lazily start the hub when `MCPHub` is called
-        build = "npm install -g mcp-hub@latest", -- Installs required mcp-hub npm module
+        build = "npm install -g mcp-hub@latest",         -- Installs required mcp-hub npm module
         config = function()
             require("mcphub").setup {
                 -- Required options
-                port = 37373,                               -- Port for MCP Hub server
+                port = 37373,                                       -- Port for MCP Hub server
                 auto_approve = true,
-                config = vim.fn.expand "~/mcpservers.json", -- Absolute path to config file
+                config = vim.fn.expand "~/mcpservers.json",         -- Absolute path to config file
 
                 extensions = {
                     codecompanion = {
@@ -274,49 +384,10 @@ return {
     }, {
         "MeanderingProgrammer/render-markdown.nvim",
         ft = { "markdown", "codecompanion" }
-    },                                          -- Optional: For prettier markdown rendering
-        { "stevearc/dressing.nvim", opts = {} } -- Optional: Improves `vim.ui.select`
+    },                                            -- Optional: For prettier markdown rendering
+        { "stevearc/dressing.nvim", opts = {} }   -- Optional: Improves `vim.ui.select`
     },
     config = function() require "configs.code_companion" end
-}, {
-    "glepnir/template.nvim",
-    cmd = { "Template", "TemProject" },
-    config = function()
-        require("template").setup {
-            -- config in there
-        }
-    end
-}, {
-    "debugloop/telescope-undo.nvim",
-    dependencies = { -- note how they're inverted to above example
-        {
-            "nvim-telescope/telescope.nvim",
-            dependencies = { "nvim-lua/plenary.nvim" }
-        }
-    },
-    keys = {
-        { -- lazy style key map
-            "<leader>u",
-            "<cmd>Telescope undo<cr>",
-            desc = "undo history"
-        }
-    },
-    opts = {
-        -- don't use `defaults = { }` here, do this in the main telescope spec
-        extensions = {
-            undo = {
-                -- telescope-undo.nvim config, see below
-            }
-            -- no other extensions here, they can have their own spec too
-        }
-    },
-    config = function(_, opts)
-        -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
-        -- configs for us. We won't use data, as everything is in it's own namespace (telescope
-        -- defaults, as well as each extension).
-        require("telescope").setup(opts)
-        require("telescope").load_extension "undo"
-    end
 }, {
     "nvim-telescope/telescope.nvim",
     dependencies = {
@@ -339,7 +410,7 @@ return {
     "linux-cultist/venv-selector.nvim",
     dependencies = {
         "neovim/nvim-lspconfig", "mfussenegger/nvim-dap",
-        "mfussenegger/nvim-dap-python", -- optional
+        "mfussenegger/nvim-dap-python",     -- optional
         {
             "nvim-telescope/telescope.nvim",
             branch = "0.1.x",
@@ -347,7 +418,7 @@ return {
         }
     },
     lazy = false,
-    branch = "regexp", -- This is the regexp branch, use this for the new version
+    branch = "regexp",     -- This is the regexp branch, use this for the new version
     config = function() require("venv-selector").setup() end,
     keys = { { ",v", "<cmd>VenvSelect<cr>" } }
 }, {
@@ -383,417 +454,295 @@ return {
             }
         }
     end
-}, { "nvim-telescope/telescope-media-files.nvim", lazy = false }, {
-    "dhruvmanila/browser-bookmarks.nvim",
-    version = "*",
-    -- Only required to override the default options
-    opts = {
-        -- Override default configuration values
-        selected_browser = "chrome"
+}, {
+    "iamcco/markdown-preview.nvim",
+    cmd = {
+        "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop"
     },
-    dependencies = {
-        --   -- Only if your selected browser is Firefox, Waterfox or buku
-        --   'kkharji/sqlite.lua',
-        --
-        --   -- Only if you're using the Telescope extension
-        -- 'nvim-telescope/telescope.nvim',
-        -- }
-    },
-
-    {
-        "iamcco/markdown-preview.nvim",
-        cmd = {
-            "MarkdownPreviewToggle", "MarkdownPreview",
-            "MarkdownPreviewStop"
-        },
-        build = "cd app && yarn install",
-        init = function() vim.g.mkdp_filetypes = { "markdown" } end,
-        ft = { "markdown" }
-    },
-
-    {
-        "lervag/vimtex",
-        lazy = false,
-        init = function() vim.g.vimtex_view_method = "zathura" end
-    },
-
-    {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-        dependencies = "nvim-treesitter",
-        run = ":TSUpdate"
-    },
-
-    {
-        "ibhagwan/fzf-lua",
-        -- optional for icon support
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            -- calling `setup` is optional for customization
-            require("fzf-lua").setup {}
-        end
-    },
-
-    { "rafamadriz/friendly-snippets" },
-    {
-        "TobinPalmer/rayso.nvim",
-        lazy = false,
-        cmd = { "Rayso" },
-        config = function()
-            require("rayso").setup {
-                open_cmd = "zen-browser",
-                options = {
-                    background = true,
-                    dark_mode = true,
-                    paddings = 64,
-                    themes = "Midnight",
-                    title = "Untitled"
-                }
-            }
-        end
-    },
-
-    {
-        "ziontee113/icon-picker.nvim",
-        lazy = false,
-        config = function()
-            require("icon-picker").setup { disable_legacy_comands = true }
-        end
-    },
-
-    {
-        "nvim-telescope/telescope-ui-select.nvim",
-        lazy = false,
-        dependecies = { "nvim-telescope/telescope.nvim" },
-        require("telescope").setup {
-            extensions = {
-                ["ui-select"] = {
-                    require("telescope.themes").get_dropdown {
-                        -- even more opts
-                    }
-
-                    -- pseudo code / specification for writing custom displays, like the one
-                    -- for "codeactions"
-                    -- specific_opts = {
-                    --   [kind] = {
-                    --     make_indexed = function(items) -> indexed_items, width,
-                    --     make_displayer = function(widths) -> displayer
-                    --     make_display = function(displayer) -> function(e)
-                    --     make_ordinal = function(e) -> string
-                    --   },
-                    --   -- for example to disable the custom builtin "codeactions" display
-                    --      do the following
-                    --   codeactions = false,
-                    -- }
-                }
+    build = "cd app && yarn install",
+    init = function() vim.g.mkdp_filetypes = { "markdown" } end,
+    ft = { "markdown" }
+}, {
+    "lervag/vimtex",
+    lazy = false,
+    init = function() vim.g.vimtex_view_method = "zathura" end
+}, {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    dependencies = "nvim-treesitter",
+    run = ":TSUpdate"
+}, {
+    "TobinPalmer/rayso.nvim",
+    lazy = false,
+    cmd = { "Rayso" },
+    config = function()
+        require("rayso").setup {
+            open_cmd = "zen-browser",
+            options = {
+                background = true,
+                dark_mode = true,
+                paddings = 64,
+                themes = "Midnight",
+                title = "Untitled"
             }
         }
-    },
-
-    {
-        "folke/trouble.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        cmd = "Trouble",
-        lazy = false,
-        opts = {
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-        }
-    },
-
-    {
-        "preservim/tagbar",
-        lazy = false,
-
-        {
-            "kylechui/nvim-surround",
-            version = "*", -- Use for stability; omit to use `main` branch for the latest features
-            event = "VeryLazy",
-            config = function()
-                require("nvim-surround").setup {
-                    -- Configuration here, or leave empty to use defaults
-                }
-            end
-        },
-
-        { "junegunn/fzf",           build = "./install --bin" },
-
-        { "AckslD/nvim-neoclip.lua" },
-
-        { "AckslD/muren.nvim",      config = true,            lazy = false },
-
-        { "vijaymarupudi/nvim-fzf", event = "VeryLazy" },
-
-        {
-            "echasnovski/mini.nvim",
-            version = false,
-            lazy = false,
-            config = function()
-                require("mini.comment").setup {
-                    options = {
-                        -- Function to compute custom 'commentstring' (optional)
-                        custom_commentstring = nil,
-
-                        -- Whether to ignore blank lines when commenting
-                        ignore_blank_line = false,
-
-                        -- Whether to ignore blank lines in actions and textobject
-                        start_of_line = false,
-
-                        -- Whether to force single space inner padding for comment parts
-                        pad_comment_parts = true
-                    },
-
-                    -- Module mappings. Use `''` (empty string) to disable one.
-                    mappings = {
-                        -- Toggle comment (like `gcip` - comment inner paragraph) for both
-                        -- Normal and Visual modes
-                        comment = "gc",
-
-                        -- Toggle comment on current line
-                        comment_line = "gcc",
-
-                        -- Toggle comment on visual selection
-                        comment_visual = "gc",
-
-                        -- Define 'comment' textobject (like `dgc` - delete whole comment block)
-                        -- Works also in Visual mode if mapping differs from `comment_visual`
-                        textobject = "gc"
-                    },
-
-                    -- Hook functions to be executed at certain stage of commenting
-                    hooks = {
-                        -- Before successful commenting. Does nothing by default.
-                        pre = function() end,
-                        -- After successful commenting. Does nothing by default.
-                        post = function() end
-                    }
+    end
+}, {
+    "nvim-telescope/telescope-ui-select.nvim",
+    lazy = false,
+    dependecies = { "nvim-telescope/telescope.nvim" },
+    require("telescope").setup {
+        extensions = {
+            ["ui-select"] = {
+                require("telescope.themes").get_dropdown {
+                    -- even more opts
                 }
 
-                require("mini.move").setup {
-                    -- Module mappings. Use `''` (empty string) to disable one.
-                    mappings = {
-                        -- Move visual selection in Visual mode. Defaults are Alt (Meta) + hjkl.
-                        left = "<M-h>",
-                        right = "<M-l>",
-                        down = "<M-j>",
-                        up = "<M-k>",
-
-                        -- Move current line in Normal mode
-                        line_left = "<M-h>",
-                        line_right = "<M-l>",
-                        line_down = "<M-j>",
-                        line_up = "<M-k>"
-                    },
-
-                    -- Options which control moving behavior
-                    options = {
-                        -- Automatically reindent selection during linewise vertical move
-                        reindent_linewise = true
-                    }
-                }
-
-                require("mini.splitjoin").setup()
-            end
-        },
-
-        { "niuiic/core.nvim",       lazy = false },
-
-        -- lazy.nvim
-        {
-            "folke/noice.nvim",
-            event = "VeryLazy",
-            opts = require "configs.noice",
-            dependencies = {
-                -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-                "MunifTanjim/nui.nvim", -- OPTIONAL:
-                --   `nvim-notify` is only needed, if you want to use the notification view.
-                --   If not available, we use `mini` as the fallback
-                "rcarriga/nvim-notify"
+                -- pseudo code / specification for writing custom displays, like the one
+                -- for "codeactions"
+                -- specific_opts = {
+                --   [kind] = {
+                --     make_indexed = function(items) -> indexed_items, width,
+                --     make_displayer = function(widths) -> displayer
+                --     make_display = function(displayer) -> function(e)
+                --     make_ordinal = function(e) -> string
+                --   },
+                --   -- for example to disable the custom builtin "codeactions" display
+                --      do the following
+                --   codeactions = false,
+                -- }
             }
-        },
-
-        { "stevearc/dressing.nvim", lazy = false,  opts = {} },
-
-        { "axkirillov/hbac.nvim",   config = true, lazy = false },
-
-        {
-            "mfussenegger/nvim-dap",
-            config = function()
-                local dap = require "dap"
-                dap.adapters.cppdbg = {
-                    id = "cppdbg",
-                    type = "executable",
-                    command = "C:\\Users\\manhp\\Downloads\\cpptools\\extension\\debugAdapters\\bin\\OpenDebugAD7.exe",
-                    options = { detached = false }
-                }
-                local dap = require "dap"
-                dap.configurations.cpp = {
-                    {
-                        name = "Launch file",
-                        type = "cppdbg",
-                        request = "launch",
-                        program = function()
-                            return vim.fn.input("Path to executable: ",
-                                vim.fn.getcwd() .. "/",
-                                "file")
-                        end,
-                        cwd = "${workspaceFolder}",
-                        stopAtEntry = true
-                    }, {
-                    name = "Attach to gdbserver :1234",
-                    type = "cppdbg",
-                    request = "launch",
-                    MIMode = "gdb",
-                    miDebuggerServerAddress = "localhost:1234",
-                    miDebuggerPath = "/usr/bin/gdb",
-                    cwd = "${workspaceFolder}",
-                    program = function()
-                        return vim.fn.input("Path to executable: ",
-                            vim.fn.getcwd() .. "/",
-                            "file")
-                    end
-                }
-                }
-            end,
-            lazy = false
-        },
-
-        {
-            "rcarriga/nvim-dap-ui",
-            dependencies = { "mfussenegger/nvim-dap" },
-            lazy = false
-        },
-
-        { -- This plugin
-            "Zeioth/compiler.nvim",
-            lazy = false,
-            cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
-            dependencies = { "stevearc/overseer.nvim" },
-            opts = {}
-        },
-
-        { -- The task runner we use
-            "stevearc/overseer.nvim",
-            -- commit = "400e762648b70397d0d315e5acaf0ff3597f2d8b",
-            cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
-            opts = {
-                task_list = {
-                    direction = "bottom",
-                    min_height = 25,
-                    max_height = 25,
-                    default_detail = 1
-                }
-            }
-        },
-
-        { "nvim-lua/popup.nvim", lazy = false },
-
-        { "ray-x/guihua.lua",    run = "cd lua/fzy && make", event = "VeryLazy" },
-
-        { "smoka7/hop.nvim",     lazy = false,               version = "*",     opts = {} },
-
-        {
-            "folke/flash.nvim",
-            event = "VeryLazy",
-            -- @type Flash.Config
-            opts = {},
-            -- stylua: ignore
-            keys = {
-                {
-                    "s",
-                    mode = { "n", "x", "o" },
-                    function()
-                        require("flash").jump()
-                    end,
-                    desc = "Flash"
-                }, {
-                "S",
-                mode = { "n", "x", "o" },
-                function()
-                    require("flash").treesitter()
-                end,
-                desc = "Flash Treesitter"
-            }, {
-                "r",
-                mode = "o",
-                function()
-                    require("flash").remote()
-                end,
-                desc = "Remote Flash"
-            }, {
-                "R",
-                mode = { "o", "x" },
-                function()
-                    require("flash").treesitter_search()
-                end,
-                desc = "Treesitter Search"
-            }, {
-                "<c-s>",
-                mode = { "c" },
-                function()
-                    require("flash").toggle()
-                end,
-                desc = "Toggle Flash Search"
-            }
-            }
-        },
-
-        { "pocco81/auto-save.nvim", event = "VeryLazy" },
-
-        { "niuiic/format.nvim",     event = "VeryLazy" },
-        {
-            "kawre/leetcode.nvim",
-            build = ":TSUpdate html",            -- if you have `nvim-treesitter` installed
-            dependencies = {
-                "nvim-telescope/telescope.nvim", -- "ibhagwan/fzf-lua",
-                "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim"
-            },
-            opts = {
-                -- configuration goes here
-                lang = "python"
-            }
-        },
-        {
-            "roobert/surround-ui.nvim",
-            lazy = false,
-            dependencies = {
-                "kylechui/nvim-surround", "folke/which-key.nvim"
-            },
-            config = function()
-                require("surround-ui").setup { root_key = "S" }
-            end
-        },
-
-        {
-            "piersolenski/wtf.nvim",
-            lazy = false,
-            dependencies = { "MunifTanjim/nui.nvim" },
-            opts = {},
-            keys = {
-                {
-                    "gw",
-                    mode = { "n", "x" },
-                    function() require("wtf").ai() end,
-                    desc = "Debug diagnostic with AI"
-                }, {
-                mode = { "n" },
-                "gW",
-                function()
-                    require("wtf").search()
-                end,
-                desc = "Search diagnostic with Google"
-            }
-            }
-        },
-        -- Install a plugin
-        {
-            "max397574/better-escape.nvim",
-            event = "InsertEnter",
-            config = function()
-                require("better_escape").setup()
-            end
         }
     }
-}
+}, {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = "Trouble",
+    lazy = false,
+    opts = function(_, opts)
+        return vim.tbl_deep_extend("force", opts or {}, {
+            picker = {
+                actions = require("trouble.sources.snacks").actions,
+                win = {
+                    input = {
+                        keys = {
+                            ["<c-t>"] = { "trouble_open", mode = { "n", "i" } }
+                        }
+                    }
+                }
+            }
+        })
+    end
+}, {
+    "kylechui/nvim-surround",
+    version = "*",     -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+        require("nvim-surround").setup {
+            -- Configuration here, or leave empty to use defaults
+        }
+    end
+}, { "AckslD/muren.nvim", config = true, lazy = false }, {
+    "echasnovski/mini.nvim",
+    version = false,
+    lazy = false,
+    config = function()
+        require("mini.comment").setup {
+            options = {
+                -- Function to compute custom 'commentstring' (optional)
+                custom_commentstring = nil,
+
+                -- Whether to ignore blank lines when commenting
+                ignore_blank_line = false,
+
+                -- Whether to ignore blank lines in actions and textobject
+                start_of_line = false,
+
+                -- Whether to force single space inner padding for comment parts
+                pad_comment_parts = true
+            },
+
+            -- Module mappings. Use `''` (empty string) to disable one.
+            mappings = {
+                -- Toggle comment (like `gcip` - comment inner paragraph) for both
+                -- Normal and Visual modes
+                comment = "gc",
+
+                -- Toggle comment on current line
+                comment_line = "gcc",
+
+                -- Toggle comment on visual selection
+                comment_visual = "gc",
+
+                -- Define 'comment' textobject (like `dgc` - delete whole comment block)
+                -- Works also in Visual mode if mapping differs from `comment_visual`
+                textobject = "gc"
+            },
+
+            -- Hook functions to be executed at certain stage of commenting
+            hooks = {
+                -- Before successful commenting. Does nothing by default.
+                pre = function() end,
+                -- After successful commenting. Does nothing by default.
+                post = function() end
+            }
+        }
+
+        require("mini.move").setup {
+            -- Module mappings. Use `''` (empty string) to disable one.
+            mappings = {
+                -- Move visual selection in Visual mode. Defaults are Alt (Meta) + hjkl.
+                left = "<M-h>",
+                right = "<M-l>",
+                down = "<M-j>",
+                up = "<M-k>",
+
+                -- Move current line in Normal mode
+                line_left = "<M-h>",
+                line_right = "<M-l>",
+                line_down = "<M-j>",
+                line_up = "<M-k>"
+            },
+
+            -- Options which control moving behavior
+            options = {
+                -- Automatically reindent selection during linewise vertical move
+                reindent_linewise = true
+            }
+        }
+
+        require("mini.splitjoin").setup()
+    end
+}, {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = require "configs.noice",
+    dependencies = {
+        -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+        "MunifTanjim/nui.nvim",     -- OPTIONAL:
+        --   `nvim-notify` is only needed, if you want to use the notification view.
+        --   If not available, we use `mini` as the fallback
+        "rcarriga/nvim-notify"
+    }
+}, { "stevearc/dressing.nvim", lazy = false,   opts = {} }, {
+    "mfussenegger/nvim-dap",
+    config = function()
+        local dap = require "dap"
+        dap.adapters.cppdbg = {
+            id = "cppdbg",
+            type = "executable",
+            command = "C:\\Users\\manhp\\Downloads\\cpptools\\extension\\debugAdapters\\bin\\OpenDebugAD7.exe",
+            options = { detached = false }
+        }
+        dap.configurations.cpp = {
+            {
+                name = "Launch file",
+                type = "cppdbg",
+                request = "launch",
+                program = function()
+                    return vim.fn.input("Path to executable: ",
+                        vim.fn.getcwd() .. "/", "file")
+                end,
+                cwd = "${workspaceFolder}",
+                stopAtEntry = true
+            }, {
+            name = "Attach to gdbserver :1234",
+            type = "cppdbg",
+            request = "launch",
+            MIMode = "gdb",
+            miDebuggerServerAddress = "localhost:1234",
+            miDebuggerPath = "/usr/bin/gdb",
+            cwd = "${workspaceFolder}",
+            program = function()
+                return vim.fn.input("Path to executable: ",
+                    vim.fn.getcwd() .. "/", "file")
+            end
+        }
+        }
+    end,
+    lazy = false
+}, {
+    "rcarriga/nvim-dap-ui",
+    dependencies = { "mfussenegger/nvim-dap" },
+    lazy = false
+}, {     -- This plugin
+    "Zeioth/compiler.nvim",
+    lazy = false,
+    cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+    dependencies = { "stevearc/overseer.nvim" },
+    opts = {}
+}, {     -- The task runner we use
+    "stevearc/overseer.nvim",
+    -- commit = "400e762648b70397d0d315e5acaf0ff3597f2d8b",
+    cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+    opts = {
+        task_list = {
+            direction = "bottom",
+            min_height = 25,
+            max_height = 25,
+            default_detail = 1
+        }
+    }
+}, {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    -- @type Flash.Config
+    opts = {},
+    -- stylua: ignore
+    keys = {
+        {
+            "s",
+            mode = { "n", "x", "o" },
+            function() require("flash").jump() end,
+            desc = "Flash"
+        }, {
+        "S",
+        mode = { "n", "x", "o" },
+        function() require("flash").treesitter() end,
+        desc = "Flash Treesitter"
+    }, {
+        "r",
+        mode = "o",
+        function() require("flash").remote() end,
+        desc = "Remote Flash"
+    }, {
+        "R",
+        mode = { "o", "x" },
+        function() require("flash").treesitter_search() end,
+        desc = "Treesitter Search"
+    }, {
+        "<c-s>",
+        mode = { "c" },
+        function() require("flash").toggle() end,
+        desc = "Toggle Flash Search"
+    }
+    }
+}, { "pocco81/auto-save.nvim", event = "VeryLazy" }, {
+    "roobert/surround-ui.nvim",
+    lazy = false,
+    dependencies = { "kylechui/nvim-surround", "folke/which-key.nvim" },
+    config = function() require("surround-ui").setup { root_key = "S" } end
+}, {
+    "piersolenski/wtf.nvim",
+    lazy = false,
+    dependencies = { "MunifTanjim/nui.nvim" },
+    opts = {},
+    keys = {
+        {
+            "gw",
+            mode = { "n", "x" },
+            function() require("wtf").ai() end,
+            desc = "Debug diagnostic with AI"
+        }, {
+        mode = { "n" },
+        "gW",
+        function() require("wtf").search() end,
+        desc = "Search diagnostic with Google"
+    }
+    }
+},     -- Install a plugin
+    {
+        "max397574/better-escape.nvim",
+        event = "InsertEnter",
+        config = function() require("better_escape").setup() end
+    }
 }

@@ -1,4 +1,4 @@
-require("noice").setup {
+local opts = {
     lsp = {
         -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
         override = {
@@ -16,3 +16,5 @@ require("noice").setup {
         lsp_doc_border = false -- add a border to hover docs and signature help
     }
 }
+
+return opts

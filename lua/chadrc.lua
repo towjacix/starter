@@ -1,13 +1,13 @@
 local options = {
 
     base46 = {
-        theme = "chocolate", -- default theme
+        theme = "chadwal", -- default theme
         hl_add = {},
         hl_override = {},
         integrations = {},
         changed_themes = {},
         transparency = false,
-        theme_toggle = {"chocolate", "one_light"}
+        theme_toggle = {"chadwal", "one_light"}
     },
 
     ui = {

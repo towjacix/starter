@@ -17,9 +17,9 @@ local lazy_config = require "configs.lazy"
 
 -- load plugins
 require("lazy").setup({
-    { "NvChad/NvChad",   lazy = false, branch = "v2.5", import = "nvchad.plugins" },
+    {"NvChad/NvChad", lazy = false, branch = "v2.5", import = "nvchad.plugins"},
 
-    { import = "plugins" }
+    {import = "plugins"}
 }, lazy_config)
 
 -- load theme
@@ -27,7 +27,6 @@ dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 -- require("base46").toggle_transparency()
 require("base46").load_all_highlights()
--- require("nvconfig").base46.theme = 'chocolate'
 
 require "options"
 require "nvchad.autocmds"
@@ -36,7 +35,7 @@ vim.schedule(function() require "mappings" end)
 
 require "myinit"
 require("luasnip.loaders.from_vscode").lazy_load()
-require("lazy").setup { defaults = { lazy = false } }
+
 os.execute "python ~/.config/nvim/pywal/chadwal.py &> /dev/null &"
 
 local autocmd = vim.api.nvim_create_autocmd
